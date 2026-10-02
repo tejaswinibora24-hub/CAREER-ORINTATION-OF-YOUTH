@@ -1,0 +1,245 @@
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Youth Career Compass</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;color:#17243b;background:#f3f6fb}
+button,input{font:inherit}
+nav{padding:18px max(20px,calc((100% - 950px)/2));background:#fff;font-weight:bold}
+main{max-width:950px;margin:35px auto;padding:0 18px}
+.panel{background:white;border-radius:20px;padding:clamp(22px,5vw,42px);box-shadow:0 10px 35px #1e315016}
+.step{display:none}.step.active{display:block}
+.home{text-align:center;padding:55px 22px}
+.home h1{font-size:clamp(38px,7vw,65px)}
+.muted{color:#66738a;line-height:1.6}
+.badge{color:#258779;font-size:12px;font-weight:bold;letter-spacing:2px}
+button{border:0;border-radius:11px;padding:13px 20px;background:#217e70;color:white;font-weight:bold;cursor:pointer}
+button.secondary{background:#e8f3f1;color:#176e62}
+.row{display:flex;justify-content:center;gap:10px;margin-top:22px}
+.field{margin:16px 0}
+.field label{display:block;margin-bottom:7px;font-weight:bold}
+.field input{width:100%;padding:13px;border:1px solid #d7deea;border-radius:9px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:20px 0}
+.choice{display:flex;gap:10px;align-items:flex-start;padding:15px;border:1px solid #dce3ed;border-radius:13px;cursor:pointer}
+.choice:hover{border-color:#278878}
+.choice input{margin-top:4px;accent-color:#278878}
+.choice strong{display:block;margin-bottom:5px}
+.choice small{color:#66738a}
+.error{color:#b42318;min-height:20px}
+.progress{height:8px;background:#e9edf3;border-radius:8px;margin:22px 0}
+.progress div{height:100%;width:25%;background:#278878;border-radius:8px}
+.result{margin:12px 0;padding:18px;background:#f0f7f5;border-radius:14px}
+.result h3{margin-top:0;color:#176e62}
+footer{text-align:center;color:#8993a3;padding:20px;font-size:12px}
+@media(max-width:600px){.row{flex-wrap:wrap}.row button{flex:1}}
+</style>
+</head>
+<body>
+<nav>🧭 Career Compass · Youth Career Orientation</nav>
+<main>
+
+  <!-- Home page -->
+  <section class="panel step active home" id="home">
+    <div style="font-size:60px">🌱</div>
+    <div class="badge">EXPLORE YOUR FUTURE</div>
+    <h1>Find a career path that fits you.</h1>
+    <p class="muted">Explore career areas that match your interests and skills.</p>
+    <div class="row">
+      <button onclick="go('signin')">Start Career Check →</button>
+    </div>
+  </section>
+
+  <!-- Sign-in/details page -->
+  <section class="panel step" id="signin">
+    <div class="badge">STEP 1 OF 3</div>
+    <h1>Your details</h1>
+    <p class="muted">Enter your name, email, and contact number to continue.</p>
+    <div class="field">
+      <label for="userName">Name</label>
+      <input id="userName" placeholder="Your name" autocomplete="name">
+    </div>
+    <div class="field">
+      <label for="userEmail">Email address</label>
+      <input id="userEmail" type="email" placeholder="you@example.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label for="userPhone">Contact number</label>
+      <input id="userPhone" type="tel" placeholder="e.g. 9876543210"
+             autocomplete="tel" pattern="[0-9+() -]{7,18}">
+    </div>
+    <div class="error" id="signinError"></div>
+    <div class="row">
+      <button class="secondary" onclick="go('home')">Back</button>
+      <button onclick="continueSignin()">Continue →</button>
+    </div>
+  </section>
+
+  <!-- Career choices page -->
+  <section class="panel step" id="careers">
+    <div class="badge">STEP 2 OF 3</div>
+    <h1>Choose career areas</h1>
+    <p class="muted">Select up to three areas that interest you.</p>
+    <div class="progress"><div id="progressBar"></div></div>
+    <div class="grid" id="careerChoices">
+      <label class="choice"><input type="checkbox" value="technology"><span><strong>💻 Technology</strong><small>Software, data, cybersecurity, AI</small></span></label>
+      <label class="choice"><input type="checkbox" value="health"><span><strong>🩺 Health &amp; Care</strong><small>Medicine, nursing, public health</small></span></label>
+      <label class="choice"><input type="checkbox" value="business"><span><strong>📈 Business</strong><small>Management, finance, marketing</small></span></label>
+      <label class="choice"><input type="checkbox" value="creative"><span><strong>🎨 Creative Arts</strong><small>Design, media, writing</small></span></label>
+      <label class="choice"><input type="checkbox" value="engineering"><span><strong>⚙️ Engineering</strong><small>Building, machines, energy</small></span></label>
+      <label class="choice"><input type="checkbox" value="education"><span><strong>📚 Education</strong><small>Teaching, training, learning</small></span></label>
+      <label class="choice"><input type="checkbox" value="environment"><span><strong>🌿 Environment</strong><small>Climate, wildlife, sustainability</small></span></label>
+      <label class="choice"><input type="checkbox" value="public"><span><strong>🤝 Public Service</strong><small>Law, community, government</small></span></label>
+    </div>
+    <div class="error" id="careerError"></div>
+    <div class="row">
+      <button class="secondary" onclick="go('signin')">Back</button>
+      <button onclick="continueCareers()">Next: Skills →</button>
+    </div>
+  </section>
+
+  <!-- Skills page -->
+  <section class="panel step" id="skills">
+    <div class="badge">STEP 3 OF 3</div>
+    <h1>Choose your skills</h1>
+    <p class="muted">Select skills you enjoy using or want to develop.</p>
+    <div class="grid" id="skillChoices">
+      <label class="choice"><input type="checkbox" value="problem"><span><strong>🧩 Problem solving</strong><small>Finding answers to challenges</small></span></label>
+      <label class="choice"><input type="checkbox" value="communication"><span><strong>💬 Communication</strong><small>Explaining, listening, connecting</small></span></label>
+      <label class="choice"><input type="checkbox" value="creative"><span><strong>✨ Creativity</strong><small>Making ideas, stories, or designs</small></span></label>
+      <label class="choice"><input type="checkbox" value="numbers"><span><strong>🔢 Numbers &amp; analysis</strong><small>Working with data and logic</small></span></label>
+      <label class="choice"><input type="checkbox" value="helping"><span><strong>💚 Helping people</strong><small>Supporting people and wellbeing</small></span></label>
+      <label class="choice"><input type="checkbox" value="hands"><span><strong>🛠️ Practical skills</strong><small>Building, fixing, hands-on work</small></span></label>
+      <label class="choice"><input type="checkbox" value="leadership"><span><strong>🚀 Leadership</strong><small>Organizing and taking initiative</small></span></label>
+      <label class="choice"><input type="checkbox" value="research"><span><strong>🔍 Research</strong><small>Asking questions and learning</small></span></label>
+    </div>
+    <div class="error" id="skillError"></div>
+    <div class="row">
+      <button class="secondary" onclick="go('careers')">Back</button>
+      <button onclick="showResults()">Show My Career Results →</button>
+    </div>
+  </section>
+
+  <!-- Final output page -->
+  <section class="panel step" id="results">
+    <div class="badge">YOUR CAREER RESULTS</div>
+    <h1 id="helloTitle">Career ideas for you</h1>
+    <p class="muted">These suggestions are ideas to explore based on the career areas and skills you selected.</p>
+    <div id="resultList"></div>
+    <h2>Your selected skills</h2>
+    <p id="skillSummary" class="muted"></p>
+    <p class="muted">Explore courses, talk with people in these careers, and check local qualification requirements.</p>
+    <div class="row">
+      <button class="secondary" onclick="go('skills')">Back</button>
+      <button onclick="restart()">Start Again</button>
+    </div>
+  </section>
+</main>
+<footer>Career Compass · Explore, learn, and choose at your own pace.</footer>
+
+<script>
+const careerInfo={
+  technology:{title:"Technology",jobs:"Software developer, data analyst, cybersecurity analyst, UX designer",skills:["problem","numbers","creative","research"]},
+  health:{title:"Health & Care",jobs:"Nurse, doctor, physiotherapist, health educator",skills:["helping","communication","research"]},
+  business:{title:"Business",jobs:"Entrepreneur, accountant, project coordinator, marketing specialist",skills:["leadership","numbers","communication"]},
+  creative:{title:"Creative Arts",jobs:"Graphic designer, writer, animator, content producer",skills:["creative","communication","research"]},
+  engineering:{title:"Engineering",jobs:"Civil, electrical, or mechanical engineer; product designer",skills:["problem","hands","numbers"]},
+  education:{title:"Education",jobs:"Teacher, trainer, learning designer, education counselor",skills:["communication","helping","leadership"]},
+  environment:{title:"Environment",jobs:"Environmental scientist, conservation worker, sustainability officer",skills:["research","problem","hands"]},
+  public:{title:"Public Service",jobs:"Lawyer, community worker, policy assistant, public administrator",skills:["communication","helping","research","leadership"]}
+};
+
+function go(id){
+  document.querySelectorAll(".step").forEach(section=>section.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function continueSignin(){
+  const name=document.getElementById("userName").value.trim();
+  const email=document.getElementById("userEmail");
+  const phone=document.getElementById("userPhone");
+
+  if(!name||!email.value.trim()||!email.checkValidity()||
+     !phone.value.trim()||!phone.checkValidity()){
+    document.getElementById("signinError").textContent=
+      "Enter your name, a valid email address, and a valid contact number.";
+    return;
+  }
+
+  document.getElementById("signinError").textContent="";
+  go("careers");
+}
+
+function continueCareers(){
+  const chosen=document.querySelectorAll("#careerChoices input:checked");
+
+  if(chosen.length<1||chosen.length>3){
+    document.getElementById("careerError").textContent=
+      "Please choose between 1 and 3 career areas.";
+    return;
+  }
+
+  document.getElementById("careerError").textContent="";
+  document.getElementById("progressBar").style.width="66%";
+  go("skills");
+}
+
+function showResults(){
+  const selectedSkills=[...document.querySelectorAll("#skillChoices input:checked")]
+    .map(input=>input.value);
+
+  if(selectedSkills.length===0){
+    document.getElementById("skillError").textContent=
+      "Please select at least one skill.";
+    return;
+  }
+
+  document.getElementById("skillError").textContent="";
+
+  const chosen=[...document.querySelectorAll("#careerChoices input:checked")]
+    .map(input=>input.value);
+
+  const ranked=chosen.map(key=>{
+    const career=careerInfo[key];
+    const matches=career.skills.filter(skill=>selectedSkills.includes(skill)).length;
+    return {...career,matches};
+  }).sort((a,b)=>b.matches-a.matches);
+
+  const name=document.getElementById("userName").value.trim();
+  document.getElementById("helloTitle").textContent=
+    name ? "Career ideas for "+name : "Your career ideas";
+
+  document.getElementById("resultList").innerHTML=ranked.map((career,index)=>
+    '<div class="result"><h3>'+
+    (index===0?"⭐ Best match to explore: ":"Also explore: ")+career.title+
+    '</h3><p><strong>Career examples:</strong> '+career.jobs+
+    '</p><p><strong>Skill match:</strong> '+career.matches+
+    " of your selected skills match this area.</p></div>"
+  ).join("");
+
+  document.getElementById("skillSummary").textContent=
+    [...document.querySelectorAll("#skillChoices input:checked")]
+    .map(input=>input.parentElement.querySelector("strong").textContent)
+    .join(", ");
+
+  document.getElementById("progressBar").style.width="100%";
+  go("results");
+}
+
+function restart(){
+  document.getElementById("userName").value="";
+  document.getElementById("userEmail").value="";
+  document.getElementById("userPhone").value="";
+  document.querySelectorAll('input[type="checkbox"]').forEach(input=>input.checked=false);
+  document.getElementById("progressBar").style.width="25%";
+  go("home");
+}
+</script>
+</body>
+</html>
+```
